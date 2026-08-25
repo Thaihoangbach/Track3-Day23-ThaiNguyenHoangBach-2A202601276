@@ -42,6 +42,18 @@ def run_scenarios(
     typer.echo(f"Wrote metrics to {output}")
 
 
+@app.command("export-diagram")
+def export_diagram(
+    output: Annotated[Path, typer.Option("--output")] = Path("outputs/graph.mmd"),
+) -> None:
+    """Export the compiled graph as a Mermaid diagram (extension: graph diagram)."""
+    graph = build_graph(checkpointer=build_checkpointer("memory"))
+    mermaid = graph.get_graph().draw_mermaid()
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(mermaid, encoding="utf-8")
+    typer.echo(f"Wrote diagram to {output}")
+
+
 @app.command("validate-metrics")
 def validate_metrics(metrics: Annotated[Path, typer.Option("--metrics")]) -> None:
     """Validate metrics JSON schema for grading."""
