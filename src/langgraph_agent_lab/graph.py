@@ -11,7 +11,7 @@ from typing import Any
 from .state import AgentState
 
 
-def build_graph(checkpointer: Any | None = None):
+def build_graph(checkpointer: Any | None = None) -> Any:
     """Build and compile the LangGraph workflow.
 
     TODO(student): Build the complete graph with this architecture:
@@ -42,8 +42,7 @@ def build_graph(checkpointer: Any | None = None):
     """
     from langgraph.graph import END, START, StateGraph
 
-    from . import nodes
-    from . import routing
+    from . import nodes, routing
 
     builder = StateGraph(AgentState)
 

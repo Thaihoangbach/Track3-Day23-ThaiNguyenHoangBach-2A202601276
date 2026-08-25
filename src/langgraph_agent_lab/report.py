@@ -27,7 +27,14 @@ def render_report(metrics: MetricsReport) -> str:
     """
     lines: list[str] = ["# Day 08 Lab Report", ""]
 
-    lines += ["## 1. Team / student", "", "- Name: TODO(student)", "- Repo/commit: TODO(student)", "- Date: TODO(student)", ""]
+    lines += [
+        "## 1. Team / student",
+        "",
+        "- Name: TODO(student)",
+        "- Repo/commit: TODO(student)",
+        "- Date: TODO(student)",
+        "",
+    ]
 
     lines += [
         "## 2. Architecture",
@@ -44,7 +51,8 @@ def render_report(metrics: MetricsReport) -> str:
         "| Field | Reducer | Why |",
         "|---|---|---|",
         "| messages / tool_results / errors / events | append | audit trail across the run |",
-        "| route / evaluation_result / pending_question / proposed_action / approval | overwrite | only the current value drives routing |",
+        "| route / evaluation_result / pending_question / proposed_action / approval "
+        "| overwrite | only the current value drives routing |",
         "",
     ]
 
@@ -81,7 +89,8 @@ def render_report(metrics: MetricsReport) -> str:
     lines += [
         "## 6. Persistence / recovery evidence",
         "",
-        "TODO(student): explain how you used checkpointer, thread id, state history, or crash-resume.",
+        "TODO(student): explain how you used checkpointer, thread id, "
+        "state history, or crash-resume.",
         "",
     ]
 

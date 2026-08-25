@@ -76,10 +76,13 @@ def classify_node(state: AgentState) -> dict:
     query = state.get("query", "")
     llm = get_llm().with_structured_output(ClassificationResult)
     result: ClassificationResult = llm.invoke(CLASSIFY_PROMPT.format(query=query))
+    event = make_event(
+        "classify", "completed", f"classified as {result.route}", risk_level=result.risk_level
+    )
     return {
         "route": result.route,
         "risk_level": result.risk_level,
-        "events": [make_event("classify", "completed", f"classified as {result.route}", risk_level=result.risk_level)],
+        "events": [event],
     }
 
 
@@ -155,9 +158,9 @@ def answer_node(state: AgentState) -> dict:
     if tool_results:
         context_parts.append("Tool results:\n" + "\n".join(tool_results))
     if approval:
-        context_parts.append(
-            f"Approval decision: approved={approval.get('approved')}, comment={approval.get('comment')}"
-        )
+        approved = approval.get("approved")
+        comment = approval.get("comment")
+        context_parts.append(f"Approval decision: approved={approved}, comment={comment}")
 
     prompt = (
         "You are a support agent replying to a customer. Write a concise, professional final "
@@ -224,19 +227,20 @@ def approval_node(state: AgentState) -> dict:
     Default behavior: mock approval (approved=True) so tests and CI run offline.
     Extension: if env LANGGRAPH_INTERRUPT=true, use langgraph.types.interrupt() for real HITL.
 
-    Return: {"approval": {"approved": bool, "reviewer": str, "comment": str}, "events": [make_event(...)]}
+    Return: {"approval": dict with approved/reviewer/comment, "events": [make_event(...)]}
     """
     # Extension (Phase 5): if os.getenv("LANGGRAPH_INTERRUPT") == "true", replace this mock
     # with `from langgraph.types import interrupt; decision = interrupt({...})` for real HITL.
-    proposed_action = state.get("proposed_action", "")
+    proposed_action = state.get("proposed_action") or ""
     approval = {
         "approved": True,
         "reviewer": "mock-reviewer",
         "comment": f"Auto-approved: {proposed_action[:80]}",
     }
+    event = make_event("approval", "completed", "approval decision recorded", approved=True)
     return {
         "approval": approval,
-        "events": [make_event("approval", "completed", "approval decision recorded", approved=True)],
+        "events": [event],
     }
 
 
